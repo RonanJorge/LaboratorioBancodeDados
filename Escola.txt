@@ -1,0 +1,212 @@
+use escola;
+
+CREATE TABLE alunos (
+    RA INT PRIMARY KEY,
+    Nome VARCHAR(100),
+    Idade INT
+);
+
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3416, 'DIEGO PIOVESAN DE RAMOS', 18);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3423, 'LEONARDO MAGALHÃES DA ROSA', 17);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3434, 'LUIZA CRISTINA DE LIMA MARTINELI', 20);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3440, 'IVO ANDRÉ FIGUEIRA DA SILVA', 25);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3443, 'BRUNA LUISA SIMIONI', 37);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3448, 'THAÍS NICOLINI DE MELLO', 17);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3457, 'LÚCIO DANIEL TÂMARA ALVES', 29);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3459, 'LEONARDO RODRIGUES', 25);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3465, 'ÉDERSON RAFAEL VIEIRA', 19);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3466, 'DAIANA ZANROSSO DE OLIVEIRA', 21);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3467, 'DANIELA MAURER', 23);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3470, 'ALEX SALVADORI PALUDO', 42);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3471, 'VINÍCIUS SCHVARTZ', 19);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3472, 'MARIANA CHIES ZAMPIERI', 18);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3482, 'EDUARDO CAINAN GAVSKI', 19);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3483, 'REDNALDO ORTIZ DONEDA', 20);
+INSERT INTO alunos (RA, Nome, Idade) VALUES (3499, 'MAYELEN ZAMPIERON', 22);
+
+
+CREATE TABLE disciplinas (
+    Codigo INT PRIMARY KEY,
+    Nome VARCHAR(100),
+    CargaHoraria INT
+);
+
+-- Inserir os dados
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (1, 'Laboratório de Banco de Dados', 80);
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (2, 'Laboratório de Engenharia de Software', 80);
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (3, 'Programação Linear e Aplicações', 80);
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (4, 'Redes de Computadores', 80);
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (5, 'Segurança da informação', 40);
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (6, 'Teste de Software', 80);
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (7, 'Custos e Tarifas Logísticas', 80);
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (8, 'Gestão de Estoques', 40);
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (9, 'Fundamentos de Marketing', 40);
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (10, 'Métodos Quantitativos de Gestão', 80);
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (11, 'Gestão do Tráfego Urbano', 80);
+INSERT INTO disciplinas (Codigo, Nome, CargaHoraria) VALUES (12, 'Sistemas de Movimentação e Transporte', 40);
+
+
+CREATE TABLE alunos_disciplinas (
+    RA INT,
+    CodigoDisciplina INT,
+    FOREIGN KEY (RA) REFERENCES alunos(RA),
+    FOREIGN KEY (CodigoDisciplina) REFERENCES disciplinas(Codigo)
+);
+
+
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3416, 1);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3416, 4);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3423, 1);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3423, 2);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3423, 5);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3423, 6);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3434, 2);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3434, 5);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3434, 6);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3440, 1);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3443, 5);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3443, 6);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3448, 4);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3448, 5);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3448, 6);
+
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3457, 2);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3457, 4);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3457, 5);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3457, 6);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3459, 1);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3459, 6);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3465, 7);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3465, 11);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3466, 8);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3466, 11);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3467, 8);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3467, 12);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3470, 8);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3470, 9);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3470, 11);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3470, 12);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3471, 7);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3472, 7);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3472, 12);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3482, 9);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3482, 11);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3483, 8);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3483, 11);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3483, 12);
+INSERT INTO alunos_disciplinas (RA, CodigoDisciplina) VALUES (3499, 8);
+
+
+
+CREATE TABLE curso (
+    Codigo INT PRIMARY KEY,
+    Nome VARCHAR(100),
+    Area VARCHAR(100)
+);
+
+-- Inserir os dados
+INSERT INTO curso (Codigo, Nome, Area) VALUES (1, 'ADS', 'Ciências da Computação');
+INSERT INTO curso (Codigo, Nome, Area) VALUES (2, 'Logística', 'Engenharia Civil');
+
+
+
+CREATE TABLE Disciplinas_Cursos (
+    Codigo_Disciplina INT,
+    Codigo_Curso INT,
+    FOREIGN KEY (Codigo_Disciplina) REFERENCES disciplinas(Codigo),
+    FOREIGN KEY (Codigo_Curso) REFERENCES curso(Codigo)
+);
+
+-- Inserir os dados
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (1, 1);
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (2, 1);
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (3, 1);
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (4, 1);
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (5, 1);
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (6, 1);
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (7, 2);
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (8, 2);
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (9, 2);
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (10, 2);
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (11, 2);
+INSERT INTO Disciplinas_Cursos (Codigo_Disciplina, Codigo_Curso) VALUES (12, 2);
+
+
+-- Criar a tabela 'titulacao'
+CREATE TABLE titulacao (
+    Codigo INT PRIMARY KEY,
+    Titulo VARCHAR(50)
+);
+
+-- Criar a tabela 'professor' com chave estrangeira para 'titulacao'
+CREATE TABLE professor (
+    Registro INT PRIMARY KEY,
+    Nome VARCHAR(100),
+    Titulacao INT,
+    FOREIGN KEY (Titulacao) REFERENCES titulacao(Codigo)
+);
+
+-- Inserir os dados de titulação
+INSERT INTO titulacao (Codigo, Titulo) VALUES (1, 'Especialista');
+INSERT INTO titulacao (Codigo, Titulo) VALUES (2, 'Mestre');
+INSERT INTO titulacao (Codigo, Titulo) VALUES (3, 'Doutor');
+
+-- Inserir os dados de professor
+INSERT INTO professor (Registro, Nome, Titulacao) VALUES (1111, 'Leandro', 2);
+INSERT INTO professor (Registro, Nome, Titulacao) VALUES (1112, 'Antonio', 2);
+INSERT INTO professor (Registro, Nome, Titulacao) VALUES (1113, 'Alexandre', 3);
+INSERT INTO professor (Registro, Nome, Titulacao) VALUES (1114, 'Wellington', 2);
+INSERT INTO professor (Registro, Nome, Titulacao) VALUES (1115, 'Luciano', 1);
+INSERT INTO professor (Registro, Nome, Titulacao) VALUES (1116, 'Edson', 2);
+INSERT INTO professor (Registro, Nome, Titulacao) VALUES (1117, 'Ana', 2);
+INSERT INTO professor (Registro, Nome, Titulacao) VALUES (1118, 'Alfredo', 1);
+INSERT INTO professor (Registro, Nome, Titulacao) VALUES (1119, 'Celio', 2);
+INSERT INTO professor (Registro, Nome, Titulacao) VALUES (1120, 'Dewar', 3);
+INSERT INTO professor (Registro, Nome, Titulacao) VALUES (1121, 'Julio', 1);
+
+
+CREATE TABLE professor_disciplina (
+    RegistroProfessor INT,
+    CodigoDisciplina INT,
+    FOREIGN KEY (RegistroProfessor) REFERENCES professor(Registro),
+    FOREIGN KEY (CodigoDisciplina) REFERENCES disciplinas(Codigo)
+);
+
+-- Inserir os dados
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1111, 1);
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1112, 2);
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1113, 3);
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1114, 4);
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1115, 5);
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1116, 6);
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1117, 7);
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1118, 8);
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1117, 9);
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1119, 10);
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1120, 11);
+INSERT INTO professor_disciplina (RegistroProfessor, CodigoDisciplina) VALUES (1121, 12);
+
+CREATE TABLE disciplina_curso (
+    Codigo_Disciplina INT,
+    Codigo_Curso INT,
+    FOREIGN KEY (Codigo_Disciplina) REFERENCES disciplinas(Codigo),
+    FOREIGN KEY (Codigo_Curso) REFERENCES curso(Codigo)
+);
+
+-- Inserir os dados
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (1, 1);
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (2, 1);
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (3, 1);
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (4, 1);
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (5, 1);
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (6, 1);
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (7, 2);
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (8, 2);
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (9, 2);
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (10, 2);
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (11, 2);
+INSERT INTO disciplina_curso (Codigo_Disciplina, Codigo_Curso) VALUES (12, 2);
+
+
+
+
