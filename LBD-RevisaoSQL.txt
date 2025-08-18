@@ -1,0 +1,101 @@
+Atividade 1 - Laboraório de Banco de Dados
+
+1) Fazer uma pesquisa que permita gerar as listas de chamadas, com RA e nome por disciplina.
+
+SELECT a.RA, a.Nome, d.Nome AS nome_disciplina
+FROM aluno a 
+JOIN aluno_disciplina ad ON a.RA = ad.AlunoRA
+JONI disciplinas d ON d.Codigo = ad.DisciplinaCodigo
+ORDER BY d.Nome;
+
+
+2) Fazer uma pesquisa que liste o nome das disciplinas e o nome dos professores que as ministram.								
+SELECT d.Nome AS Disciplina, p.Nome AS Professor
+FROM disciplinas d
+JOIN professor_disciplina pd ON	d.Codigo = pd.CodigoDisciplina
+JOIN professor p ON p.Registro = pd.RegistroProfessor;
+
+
+3) Fazer uma pesquisa que , dado o nome de uma disciplina, retorne o nome do curso.
+
+SELECT c.Nome AS Curso
+FROM curso c
+JOIN curso_disciplina cd ON c.Codigo = cd.Codigo_Curso
+JOIN disciplinas d ON d.Codigo = cd.Codigo_Disciplina
+WHERE d.Nome = '(Nome da disciplina)';
+
+
+4) Fazer uma pesquisa que , dado o nome de uma disciplina, retorne sua área								
+SELECT c.Area AS Área
+FROM curso c
+JOIN curso_disciplina cd ON c.Codigo = cd.Codigo_Curso
+JOIN disciplinas d ON d.Codigo = cd.Codigo_Disciplina
+WHERE d.Nome = '(Nome da disciplina)';
+
+
+5) Fazer uma pesquisa que , dado o nome de uma disciplina, retorne o título do professor que a ministra								
+SELECT t.Titulo AS Título
+FROM disciplinas d
+JOIN professor_disciplina pd ON d.Codigo = pd.CodigoDisciplina 
+JOIN professor p ON p.Registro = pd.RegistroProfessor
+JOIN titulacao t ON t.Codigo = p.Titulacao
+WHERE d.Nome = '(Nome da disciplina)';
+
+
+6) Fazer uma pesquisa que retorne o nome da disciplina e quantos alunos estão matriculados em cada uma delas.
+
+SELECT d.Nome AS Disciplina, COUNT(a.RA) AS Qtde
+FROM disciplinas d
+JOIN aluno_disciplina ad ON d.Codigo = ad.DisciplinaCodigo 
+JOIN aluno a ON a.RA = ad.AlunoRA
+group by d.Nome;							
+
+
+7) Fazer uma pesquisa que, dado o nome de uma disciplina, retorne o nome do professor. Só deve retornar de disciplinas que tenham, no mínimo, 5 alunos matriculados.													
+SELECT Nome AS Professor
+FROM professor 
+WHERE Registro IN (
+	SELECT pd.RegistroProfessor
+	from professor_disciplina pd
+	WHERE PD.CodigoDisciplina = (
+		SELECT d.Codigo
+		FROM disciplinas d
+		WHERE d.Nome = '(Nome da disciplina)'
+	)
+	AND pd.CodigoDisciplina IN (
+		SELECT ad.DisciplinaCodigo
+		FROM aluno_disciplina ad
+		GROUP BY ad.DisciplinaCodigo
+		HAVING COUNT(ad.AlunoRA) >= 5
+	)
+);
+
+8) Fazer uma pesquisa que retorne o nome do curso e a quatidade de professores cadastrados que ministram aula nele. A coluna deve se chamar quantidade.													
+SELECT c.Nome AS Curso, COUNT(p.Registro) AS Quantidade
+FROM curso c
+JOIN curso_disciplina cd ON c.Codigo = cd.Codigo_Curso 
+JOIN disciplinas d ON d.Codigo = cd.Codigo_Disciplina
+JOIN professor_disciplina pd ON d.Codigo = pd.CodigoDisciplina
+JOIN professor p ON p.Registro = pd.RegistroProfessor
+group by c.Nome;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
