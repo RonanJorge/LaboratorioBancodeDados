@@ -1,0 +1,164 @@
+CREATE TABLE curso(
+codigo_curso 	INT 		NOT NULL,
+nome		VARCHAR(70)	NOT NULL,
+sigla		VARCHAR(10)	NOT NULL,
+PRIMARY KEY (codigo_curso)
+)
+
+CREATE TABLE aluno(
+ra 		CHAR(7)		NOT NULL,
+nome		VARCHAR(250)	NOT NULL,
+codigo_curso	INT		NOT NULL,
+PRIMARY KEY	(ra),
+FOREIGN KEY	(codigo_curso) 	REFERENCES	curso (codigo_curso)
+)
+
+CREATE TABLE palestrante(
+codigo_palestrante 	INT 		NOT NULL,
+nome			VARCHAR(250)	NOT NULL,
+empresa			VARCHAR(100)	NOT NULL,
+PRIMARY KEY (codigo_palestrante)
+)
+
+
+CREATE TABLE palestra(
+codigo_palestra	INT		NOT NULL,
+titulo		VARCHAR(MAX)	NOT NULL,
+carga_horaria	INT		NOT NULL,
+data		DATETIME	NOT NULL,
+codigo_palestrante  INT		NOT NULL,
+PRIMARY KEY (codigo_palestra),
+FOREIGN KEY	(codigo_palestrante) 	REFERENCES	palestrante (codigo_palestrante)
+)
+
+
+CREATE TABLE alunos_inscritos(
+ra 		CHAR(7)		NOT NULL,
+codigo_palestra	INT		NOT NULL,
+FOREIGN KEY	(ra)		REFERENCES	aluno(ra),
+FOREIGN KEY	(codigo_palestra) 	REFERENCES	palestra (codigo_palestra)
+)
+
+CREATE TABLE nao_alunos(
+rg		VARCHAR(9)	NOT NULL,
+orgao_exp	CHAR(5)		NOT NULL,
+nome		VARCHAR(250)	NOT NULL,
+PRIMARY KEY	(rg, orgao_exp)
+)
+
+CREATE TABLE nao_alunos_inscritos (
+rg 		VARCHAR(9) 	NOT NULL,
+orgao_exp 	CHAR(5) 	NOT NULL,
+codigo_palestra INT 		NOT NULL,
+PRIMARY KEY (rg, orgao_exp, codigo_palestra),
+FOREIGN KEY (codigo_palestra) REFERENCES palestra (codigo_palestra),
+FOREIGN KEY (rg, orgao_exp) REFERENCES nao_alunos (rg, orgao_exp)
+)
+
+
+INSERT INTO curso values
+(001, 'Analise e Desenvolvimento de Sistemas', 'ADS'),
+(002, 'Logística', 'LOG'),
+(003, 'Gestão de RH','GRH'),
+(004, 'Polímeros', 'POL')
+
+INSERT INTO aluno values 
+(1001,'Aaaaa',001), 
+(1002,'Bbbbb',002),
+(1003,'Ccccc',003),
+(1004,'Ddddd',003),
+(1005,'Eeeee',002),
+(1006,'Fffff',004),
+(1007,'Ggggg',003),
+(1008,'Hhhhh',001)
+
+INSERT INTO palestrante VALUES 
+(3001,'João','A'),
+(3002,'Maria','B'),
+(3003,'Josóe','C'),
+(3004,'Ronan','D'),
+(3005,'Felipe','A'),
+(3006,'Jorge','B'),
+(3007,'Leandro','C'),
+(3008,'Ana','D')
+
+
+INSERT INTO palestra VALUES 
+(20001,'Laboratorio de BD',10,'2025-08-18 12:00:00',3001),
+(20002,'Laboratorio de ES',20,'2025-08-19 12:00:00',3002),
+(20003,'Segurança',20,'2025-08-20 12:00:00',3003),
+(20004,'Governança',30,'2025-08-21 12:00:00',3002),
+(20005,'ALP',10,'2025-08-22 12:00:00',3004),
+(20006,'POO',15,'2025-08-23 12:00:00',3005),
+(20007,'Estruturas',20,'2025-08-24 12:00:00',3001),
+(20008,'Sistemas Operacionais',20,'2025-08-25 12:00:00',3002)
+
+
+INSERT INTO alunos_inscritos VALUES
+(1001,20001),
+(1001,20004),
+(1002,20003),
+(1003,20004),
+(1003,20005),
+(1005,20001),
+(1006,20005),
+(1006,20008),
+(1008,20006),
+(1008,20007)
+
+INSERT INTO nao_alunos VALUES
+('123456789','SSPSP','Ricardo'),
+('987654321','SSPSP','Leandro'),
+('234567891','SSPRJ','Cristina'),
+('876543219','SSPSJ','Paulo'),
+('345678901','SSPMT','Ana C'),
+('213343323','SSPPA','Carolina S'),
+('555654453','SSPSP','Luis')
+
+INSERT INTO nao_alunos_inscritos VALUES
+('123456789','SSPSP',20001),
+('987654321','SSPSP',20001),
+('234567891','SSPRJ',20002),
+('876543219','SSPSJ',20003),
+('345678901','SSPMT',20005),
+('213343323','SSPPA',20006),
+('555654453','SSPSP',20006),
+('123456789','SSPSP',20007),
+('987654321','SSPSP',20007),
+('234567891','SSPRJ',20007),
+('876543219','SSPSJ',20007),
+('123456789','SSPSP',20008)
+
+GO
+CREATE VIEW v_lista_presenca 
+AS
+SELECT a.ra AS Num_Documento,
+	a.nome AS Nome_Pessoa,
+	p.titulo AS Título_Palestra,
+	pa.nome AS Nome_Palestrante,
+	p.carga_horaria AS Carga_Horária, 
+	CONVERT(VARCHAR(10), p.data, 103) AS Data_, 
+	FORMAT(p.data, 'HH:mm')  AS Hora
+FROM aluno a
+JOIN alunos_inscritos ai ON a.ra = ai.ra
+JOIN palestra p ON p.codigo_palestra = ai.codigo_palestra
+JOIN palestrante pa ON pa.codigo_palestrante = p.codigo_palestrante
+WHERE p.codigo_palestra = '(Código da Palestra)'
+UNION
+
+SELECT CONCAT(na.rg,na.orgao_exp) AS Num_Documento,
+	na.nome AS Nome_Pessoa,
+	p.titulo AS Título_Palestra,
+	pa.nome AS Nome_Palestrante,
+	p.carga_horaria AS Carga_Horária, 
+	CONVERT(VARCHAR(10), p.data, 103) AS Data_, 
+	FORMAT(p.data, 'HH:mm')  AS Hora
+FROM nao_alunos na
+JOIN nao_alunos_inscritos nai ON nai.rg = na.rg AND nai.orgao_exp = na.orgao_exp
+JOIN palestra p ON p.codigo_palestra = nai.codigo_palestra
+JOIN palestrante pa ON pa.codigo_palestrante = p.codigo_palestrante
+WHERE p.codigo_palestra = '(Código da Palestra)'
+
+GO
+SELECT * FROM v_lista_presenca
+ORDER BY Nome_Pessoa
