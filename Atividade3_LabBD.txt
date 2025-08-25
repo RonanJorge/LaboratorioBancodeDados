@@ -1,0 +1,129 @@
+----EXERCÍCIO 1A
+DECLARE	@num		INT,
+		@fatorial	INT,
+		@cont		INT
+SET @num = 6
+SET	@cont = 1
+SET @fatorial = 1
+WHILE(@cont <= @num)
+BEGIN
+	SET @fatorial = @fatorial * @cont
+	SET @cont = @cont + 1
+END
+
+PRINT (@fatorial)
+
+
+--Exercício 1B
+DECLARE	@va		INT,
+	@b		INT,
+	@c		INT,
+	@delta	INT
+SET @va = 1
+SET	@b = -5
+SET @c = 6
+SET @delta = @b * @b - 4 * @va * @c
+IF(@delta < 0)
+BEGIN
+	PRINT('Nao ha raizes reais')
+END
+ELSE
+BEGIN
+	PRINT('As raizes sao ')
+	PRINT((-1 * @b + sqrt(@delta) )/(2*@va))
+	PRINT('e')
+	PRINT((-1 * @b - sqrt(@delta) )/(2*@va))
+END
+
+---Exercício 1C
+DECLARE	@alturaAna		FLOAT,
+		@alturaMaria	FLOAT,
+		@anos			INT
+SET @alturaAna = 1.10
+SET @alturaMaria = 1.5
+SET @anos = 0
+WHILE(@alturaAna <= @alturaMaria)
+BEGIN
+	SET @alturaAna = @alturaAna + 0.03
+	SET @alturaMaria = @alturaMaria + 0.02
+	SET @anos = @anos + 1
+END
+PRINT('Serao necessários ' + CAST(@anos AS VARCHAR(3)) + ' anos.')
+
+
+--Exercício 1D
+DECLARE @num2		INT,
+		@cont2		INT
+SET @num2 = 14 --- numero de termos
+SET @cont2 = 0
+WHILE(@cont2 <= (@num2) - 1)
+BEGIN
+IF((@cont2) % 3 = 0)
+	BEGIN
+		PRINT((@cont2/3) + 1)
+	END
+	ELSE
+	BEGIN
+		PRINT((@cont2/3) + 4)
+	END
+SET @cont2 = @cont2 + 1
+END
+
+
+--Exercício 1E
+CREATE DATABASE loja
+CREATE TABLE produto(
+	codigo		INT, 
+	nome		VARCHAR(30),
+	valor		DECIMAL(7,2),
+	vencimento	DATE,
+	PRIMARY KEY (codigo)
+)
+
+DECLARE @codigoProd		INT,
+		@nomeProd		VARCHAR(30),
+		@valorProd		DECIMAL(7,2),
+		@vencimentoProd	DATE
+SET		@codigoProd = 50001
+WHILE(@codigoProd <= 50050)
+BEGIN
+	SET @nomeProd = 'Produto ' + CAST(@codigoProd AS VARCHAR(6))
+	SET @valorProd = CAST(RAND() * 90 + 10 AS DECIMAL(7,2))
+	SET @vencimentoProd =  + DATEADD(DAY, CAST((RAND() * 4 + 3) AS INT), GETDATE())
+	INSERT INTO produto VALUES
+	(@codigoProd, @nomeProd, @valorProd, @vencimentoProd)
+	SET @codigoProd = @codigoProd + 1
+END
+
+SELECT * FROM produto
+
+
+--Exercício 1F
+CREATE DATABASE biblioteca
+CREATE TABLE livro(
+	id			INT, 
+	titulo		VARCHAR(30),
+	qtdPaginas		INT,
+	qtdEstoque	INT,
+	PRIMARY KEY (id)
+)
+
+DECLARE @idLivro			INT,
+		@tituloLivro		VARCHAR(30),
+		@qtdPaginasLivro	INT,
+		@qtdEstoqueLivro	INT
+SET		@idLivro = 981101
+WHILE(@idLivro <= 981150)
+BEGIN
+	SET @tituloLivro = 'Livro ' + CAST(@idLivro AS VARCHAR(7))
+	SET @qtdPaginasLivro = CAST(RAND() * 300 + 100 AS INT)
+	SET @qtdEstoqueLivro = CAST(RAND() * 18 + 2 AS INT)
+	INSERT INTO livro VALUES
+	(@idLivro, @tituloLivro, @qtdPaginasLivro, @qtdEstoqueLivro)
+	SET @idLivro = @idLivro + 1
+END
+
+SELECT * FROM livro
+
+
+
