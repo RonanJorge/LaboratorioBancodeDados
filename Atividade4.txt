@@ -1,0 +1,163 @@
+-- Exercicio 1A
+DECLARE @num INT
+SET @num = 221 -- digite o numero
+IF(@num % 2 <> 0 AND @num % 3 <> 0 AND @num % 5 <> 0)
+BEGIN
+	PRINT('O numero não eh multiplo de 2, 3 ou 5.')
+END
+ELSE
+BEGIN
+	IF(@num % 2 = 0)
+	BEGIN
+		PRINT('O numero eh multiplo de 2.')
+	END
+	IF(@num % 3 = 0)
+	BEGIN
+		PRINT('O numero eh multiplo de 3.')
+	END
+	IF(@num % 5 = 0)
+	BEGIN
+		PRINT('O numero eh multiplo de 5.')
+	END
+END
+
+
+
+--Exercício 1B
+DECLARE @n1 INT,
+		@n2 INT,
+		@n3	INT,
+		@maior	INT,
+		@menor	INT
+SET @n1 = -3331 -- digite o primeiro número
+SET @n2 = -333  -- digite o segundo número
+SET @n3 = 0     -- digite o terceiro número
+SET @maior = @n1
+SET @menor = @n1
+
+IF(@n2 > @maior)
+BEGIN
+	SET @maior = @n2
+END
+IF(@n2 < @menor)
+BEGIN
+	SET @menor = @n2
+END
+IF(@n3 > @maior)
+BEGIN
+	SET @maior = @n3
+END
+IF(@n3 < @menor)
+BEGIN
+	SET @menor = @n3
+END
+PRINT('O maior numero é ' + CAST(@maior AS VARCHAR(MAX)) + '.')
+PRINT('O menor numero é ' + CAST(@menor AS VARCHAR(MAX)) + '.')
+
+
+
+--Exercício 1C
+DECLARE @num INT,
+		@n1 INT,
+		@n2 INT, 
+		@n3 INT,
+		@soma INT,
+		@cont INT
+SET @num = 15 
+SET @CONT = 3
+SET @n1 = 1
+SET @n2 = 1
+SET @soma = @n1 + @n2
+PRINT(@n1)
+PRINT(@N2)
+WHILE(@cont <= 15)
+BEGIN
+	SET @n3 = @n1 + @n2
+	SET @soma = @soma + @n3
+	PRINT(@n3)
+	SET @n1 = @n2
+	SET @n2 = @n3
+	SET @cont = @cont + 1
+END
+PRINT('A soma dos 15 primeiros termos é ' + CAST(@soma AS VARCHAR(100)) + '.')
+
+
+-- Exercício 1D (acho que não entendi o enunciado...)
+DECLARE @frase VARCHAR(500),
+		@maiusculo VARCHAR(500),
+		@minusculo VARCHAR(500)
+SET @frase = 'Socorram-me subi no onibus em Marrocos' --digite a frase
+SET @maiusculo = UPPER(@frase)
+SET @minusculo = LOWER(@frase)
+
+PRINT('A frase em maiúsculo é ' + @maiusculo)
+PRINT('A frase em minúsculo é ' + @minusculo)
+
+
+
+--Exercício 1E
+DECLARE @palavra VARCHAR(30),
+		@invertida VARCHAR(30),
+		@cont INT
+SET @palavra = 'corinthians' -- digite a palavra
+SET @cont =  LEN(@palavra)
+SET @invertida = ''
+
+WHILE(@cont > 0)
+BEGIN
+	SET @invertida = CONCAT(@invertida, SUBSTRING(@palavra,@cont,1))
+	SET @cont = @cont - 1
+END
+PRINT('A palavra invertida é' + @invertida)
+
+
+---Exercício 1F
+CREATE DATABASE loja
+CREATE TABLE computador(
+	id		INT,
+	marca	VARCHAR(40),
+	qtdRAM	INT,
+	tipoHD	VARCHAR(10),
+	qtdHD	INT,
+	freqCPU	DECIMAL(7,2)
+	PRIMARY KEY (id)
+)
+
+DECLARE @idComp			INT,
+		@marcaComp		VARCHAR(40),
+		@qtdRAM			INT,
+		@tipoHDComp		VARCHAR(10),
+		@qtdHDComp		INT,
+		@freqCPUComp	DECIMAL(7,2)
+
+SET @idComp = 10001
+WHILE(@idComp <= 10050)
+BEGIN
+	SET @marcaComp = CONCAT('Marca ', CAST(@idComp - 10000 AS VARCHAR(6)))
+	SET @qtdRAM = POWER(2, ((CAST(RAND() * 10000 AS INT) % 4) + 1))
+	IF(@idComp % 3 = 0)
+	BEGIN
+		SET @tipoHDComp = 'HDD'
+		SET @qtdHDComp = 500 * POWER(2,((CAST(RAND() * 10000 AS INT) % 3))) --- Resto 0, 1 ou 2
+	END
+	ELSE
+	BEGIN
+		IF(@idComp % 3 = 1)
+		BEGIN
+			SET @tipoHDComp = 'SSD'
+			SET @qtdHDComp = POWER(2,((CAST(RAND() * 10000 AS INT) % 3) + 7)) --- Resto 0, 1 ou 2
+		END
+		ELSE
+		BEGIN
+			SET @tipoHDComp = 'M2 NVME'
+			SET @qtdHDComp = POWER(2,((CAST(RAND() * 10000 AS INT) % 4))) --- Resto 0, 1, 2 ou 3 (1TB, 2TB, 4TB ou 8TB)
+		END
+	END
+	SET @freqCPUComp = RAND() * 1.5 + 1.7
+	INSERT INTO computador VALUES
+	(@idComp, @marcaComp, @qtdRAM, @tipoHDComp, @qtdHDComp, @freqCPUComp)
+
+	SET @idComp = @idComp + 1
+END
+
+SELECT * FROM computador
