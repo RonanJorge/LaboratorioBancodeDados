@@ -1,0 +1,241 @@
+CREATE DATABASE academia3
+
+CREATE TABLE aluno(
+		codigoAluno INT,
+		nome VARCHAR(40),
+		PRIMARY KEY (codigoAluno)
+)
+
+INSERT INTO aluno VALUES
+(1, 'Ronan')
+
+CREATE TABLE atividade(
+		codigo INT,
+		descricao VARCHAR(70),
+		imc DECIMAL(6,2),
+		PRIMARY KEY (codigo)
+)
+
+
+
+
+
+CREATE TABLE atividadesAluno (
+		codigoAluno INT,
+		altura DECIMAL(6,2),
+		peso DECIMAL(6,2),
+		imc DECIMAL(4,1),
+		atividade VARCHAR(70),
+		FOREIGN KEY (codigoAluno) REFERENCES aluno (codigoAluno)
+)
+
+
+---- Dados iniciais
+
+INSERT INTO atividade VALUES
+(1, 'Corrida + Step', 18.5),
+(2, 'Biceps + Costas + Pernas', 24.9),
+(3, 'Esteira + Biceps + Costas + Pernas', 29.9),
+(4, 'Bicicleta + Biceps + Costas + Pernas', 34.9),
+(5, 'Esteira + Bicicleta', 39.9)
+
+
+INSERT INTO aluno VALUES(0,'')
+INSERT INTO atividadesAluno VALUES (0,0,0,0,'')
+
+
+--- Procedures 
+
+---- SP Insere Aluno Novo quando codigo NULL
+GO
+CREATE PROCEDURE sp_inserirAluno(@nomeAluno 	VARCHAR(70), 
+				@alturaAluno 	DECIMAL(6,2), 
+				@pesoAluno 	DECIMAL(6,2))
+AS
+BEGIN
+	DECLARE @idAluno INT
+	EXEC sp_gerarIdAlunoNovo @idAluno OUTPUT
+	INSERT INTO aluno VALUES
+	(@idAluno, @nomeAluno)
+
+	DECLARE @imcAluno DECIMAL(6,2)
+	EXEC sp_imc @alturaAluno, @pesoAluno, @imcAluno OUTPUT
+	
+	DECLARE @codigoAtividadeAluno DECIMAL(6,2)
+	EXEC sp_retornaCodigoAtividade @imcAluno, @codigoAtividadeAluno OUTPUT
+
+	DECLARE @atividadeAluno VARCHAR(35)
+	SET @atividadeAluno = (SELECT descricao FROM atividade WHERE codigo = @codigoAtividadeAluno) 
+
+	INSERT INTO atividadesAluno VALUES
+	(@idAluno, @alturaAluno, @pesoAluno, @imcAluno, @atividadeAluno)
+END
+
+
+----- SP Atualiza Aluno cadastrado
+GO
+CREATE PROCEDURE sp_atualizarAluno (@codigoAluno INT, @nomeAluno VARCHAR(70), @alturaAluno DECIMAL(6,2), @pesoAluno DECIMAL(6,2), @msgAluno INT OUTPUT)
+AS
+BEGIN
+	IF(@nomeAluno IS NULL)
+	BEGIN
+		DECLARE @imcAluno1 DECIMAL(6,2)
+		EXEC sp_imc @alturaAluno, @pesoAluno, @imcAluno1 OUTPUT
+
+		DECLARE @codigoAtividadeAluno1 DECIMAL(6,2)
+		EXEC sp_retornaCodigoAtividade @imcAluno1, @codigoAtividadeAluno1 OUTPUT
+	
+		DECLARE @atividadeAluno1 VARCHAR(35)
+		SET @atividadeAluno1 = (SELECT descricao FROM atividade WHERE codigo = @codigoAtividadeAluno1) 
+
+		UPDATE atividadesAluno 
+		SET altura = @alturaAluno, peso = @pesoAluno, imc = @imcAluno1, atividade = @atividadeAluno1
+		WHERE codigoAluno = @codigoAluno
+
+	END
+	ELSE
+	BEGIN
+		UPDATE aluno 
+		SET nome = @nomeAluno WHERE codigoAluno = @codigoAluno
+		
+		DECLARE @imcAluno DECIMAL(6,2)
+		EXEC sp_imc @alturaAluno, @pesoAluno, @imcAluno OUTPUT
+
+		DECLARE @codigoAtividadeAluno DECIMAL(6,2)
+		EXEC sp_retornaCodigoAtividade @imcAluno, @codigoAtividadeAluno OUTPUT
+	
+		DECLARE @atividadeAluno VARCHAR(35)
+		SET @atividadeAluno = (SELECT descricao FROM atividade WHERE codigo = @codigoAtividadeAluno) 
+
+		UPDATE atividadesAluno 
+		SET altura = @alturaAluno, peso = @pesoAluno, imc = @imcAluno, atividade = @atividadeAluno
+		WHERE codigoAluno = @codigoAluno
+	END
+	
+	SET @msgAluno = 3
+
+END
+
+
+----- SP recebe um código e verifica se código já existe no BD
+GO
+CREATE PROCEDURE sp_validaCodigo (@codigoAluno INT, @valido INT OUTPUT)
+AS
+BEGIN
+	IF(@codigoAluno IN (SELECT codigoAluno FROM aluno))
+	BEGIN
+		SET @valido = 1
+	END
+	ELSE
+	BEGIN
+		SET @valido = 0
+	END
+END
+
+
+----- SP gera um código para Aluno Novo
+GO
+CREATE PROCEDURE sp_gerarIdAlunoNovo (@codigoAluno INT OUTPUT)
+AS 
+BEGIN
+	SET @codigoAluno = (SELECT codigoAluno FROM aluno WHERE codigoAluno >= ALL(SELECT codigoAluno FROM aluno WHERE codigoAluno > 0)) + 1
+END
+
+
+---- SP calcula imc a partir da altura e peso fornecidos
+GO
+CREATE PROCEDURE sp_imc (@altura DECIMAL(6,2), @peso DECIMAL(6,2), @imc DECIMAL(6,2) OUTPUT)
+AS
+BEGIN
+	SET @imc = @peso / (@altura * @altura)
+END
+
+
+------ SP retorna código da atividade segundo as restrições, quando dado o imc
+GO
+CREATE PROCEDURE sp_retornaCodigoAtividade (@imc DECIMAL(6,2), @codigoAtividade INT OUTPUT)
+AS
+BEGIN
+	DECLARE @ok INT
+	DECLARE @cont INT
+	SET @ok = 0
+	SET @cont = 1
+	WHILE(@cont <= 5 AND @ok = 0)
+	BEGIN
+		IF(@imc < (SELECT imc FROM atividade WHERE codigo = @cont))
+		BEGIN
+			SET @codigoAtividade = @cont
+			SET @ok = 1
+		END
+		ELSE
+		BEGIN IF(@cont < 5)
+			BEGIN
+				SET @cont = @cont + 1 
+			END
+			ELSE
+			BEGIN
+				SET @codigoAtividade = @cont
+				SET @ok = 1
+			END
+		END
+	END
+END
+
+----- SP alunoatividades 
+GO
+CREATE PROCEDURE sp_alunoatividades (@codigoAluno INT, @nomeAluno VARCHAR(70), @alturaAluno DECIMAL(6,2), @pesoAluno DECIMAL(6,2), @msg INT OUTPUT)
+AS
+BEGIN
+	IF (@codigoAluno IS NULL)
+	BEGIN
+		EXEC sp_inserirAluno @nomeAluno, @alturaAluno, @pesoAluno
+		SET @msg = 1
+		PRINT ('Aluno(a) inserido(a)')
+	END
+	ELSE
+	BEGIN
+		DECLARE @valido INT
+		EXEC sp_validaCodigo @codigoAluno, @valido OUTPUT
+		IF(@valido = 1)
+		BEGIN
+			EXEC sp_atualizarAluno @codigoAluno, @nomeAluno, @alturaAluno, @pesoAluno, @msg OUTPUT
+			SET @msg = 3
+			PRINT ('Aluno(a) atualizado(a)')
+		END
+		ELSE
+		BEGIN
+			SET @msg = 2
+			PRINT ('Código inválido')
+		END
+	END
+END
+
+
+-------- Fim da construção do Banco
+
+--- Exemplo de inserção de aluno novo com código null
+DECLARE @msgAluno2 INT
+EXEC sp_alunoatividades	NULL, 'Joaozinho', 1.77, 110, @msgAluno2
+
+--- Exemplo de alteração de aluno com código já existente e nome NULL
+DECLARE @msgAluno3 INT
+EXEC sp_alunoatividades	1, NULL, 1.79, 90, @msgAluno3
+
+--- Exemplo de alteração de aluno com código já existente e nome não nulo
+DECLARE @msgAluno4 INT
+EXEC sp_alunoatividades	1, 'Joaozinho da Silva' , 1.81, 94, @msgAluno4
+
+--- Exemplo de alteração de aluno com código não cadastrado
+DECLARE @msgAluno5 INT
+EXEC sp_alunoatividades	99, 'Mariazinha da Silva' , 1.55, 51, @msgAluno5
+
+
+/* ----- Mostrar tabela de Alunos e Atividades
+SELECT * from aluno
+SELECT * from atividadesAluno
+
+------  Limpar o banco
+DELETE FROM atividadesAluno WHERE codigoAluno > 0
+DELETE FROM aluno WHERE codigoAluno > 0
+*/
+
